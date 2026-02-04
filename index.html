@@ -1,145 +1,360 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Food Coherence Initiative</title>
-  <link rel="stylesheet" href="https://unpkg.com/mvp.css" />
-  <style>
-    .score-output, .risk-overlay {
-      text-align: center;
-    }
-    iframe {
-      border: none;
-      border-radius: 8px;
-    }
-    img {
-      max-width: 100%;
-      border-radius: 8px;
-    }
-    section {
-      margin-bottom: 3em;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Food Coherence Initiative</h1>
-    <p class="subtitle">Translating bioelectric food integrity into clinical and regulatory action</p>
-    <nav>
-      <a href="#overview">Overview</a>
-      <a href="#label">Label</a>
-      <a href="#science">Science</a>
-      <a href="#calculator">Score Tool</a>
-      <a href="#law">Legal</a>
-      <a href="#videos">Videos</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </header>
-
-  <main>
-    <section id="overview">
-      <h2>What Is Food Coherence?</h2>
-      <p>Food Coherence represents a novel clinical and diagnostic measure of how food impacts biological integrity. It quantifies systemic stress, mitochondrial resilience, and regenerative pattern fidelity based on lab-detectable electrical, redox, and inflammatory signals. This score bridges public health, medicine, and regulatory safety gaps currently left unaddressed by traditional nutrition labels.</p>
-      <img src="assets/Food Coherence Bioelectric signal.jpeg" alt="Bioelectric signal diagram" />
-    </section>
-
-    <section id="label">
-      <h2>The Food Coherence Label</h2>
-      <p>Products receive a 0–100 score indicating bioelectrical coherence and chronic burden. This label supports front-of-pack guidance, institutional procurement standards, and EU legal compliance under Article 14 (long-term safety).</p>
-      <ul>
-        <li><strong>80–100:</strong> High Coherence – restorative to cellular signaling</li>
-        <li><strong>50–79:</strong> Moderate Coherence – conditionally safe</li>
-        <li><strong>0–49:</strong> Low Coherence – chronic immune/inflammatory signal risk</li>
-      </ul>
-      <img src="assets/Food Coherence Label.jpeg" alt="Sample coherence score label">
-    </section>
-
-    <section id="science">
-      <h2>The Bioelectric Impact of Food</h2>
-      <p>Scientific evidence supports that food acts as an instructional signal. Ultra-processed foods induce electrical chaos: depolarizing membranes, suppressing mitochondrial voltage (ΔΨm), and sustaining chronic immune activation. These disruptions precede clinical disease and are measurable through optical, electrical, and redox metrics.</p>
-      <img src="assets/Food coherence measures.jpeg" alt="What coherence measures" />
-    </section>
-
-    <section id="calculator">
-      <h2>Interactive Coherence Score Tool</h2>
-      <form class="calculator">
-        <label>Select Food Category:
-          <select id="category">
-            <option value="80">NOVA 1 – Unprocessed/Minimally Processed</option>
-            <option value="60">NOVA 2 – Culinary Ingredients</option>
-            <option value="40">NOVA 3 – Processed Foods</option>
-            <option value="20">NOVA 4 – Ultra-Processed Foods</option>
-          </select>
-        </label>
-        <label>Mitochondrial Voltage:
-          <input type="range" id="voltage" min="0" max="10" value="5">
-        </label>
-        <label>Pattern Memory:
-          <input type="range" id="pattern" min="0" max="10" value="5">
-        </label>
-        <label>Fragmentation:
-          <input type="range" id="fragment" min="0" max="10" value="5">
-        </label>
-        <label>Inflammatory Noise:
-          <input type="range" id="noise" min="0" max="10" value="5">
-        </label>
-        <div class="score-output" id="coherenceScore">Score: 65</div>
-        <div class="risk-overlay" id="riskOverlay">Risk Level: Moderate</div>
-      </form>
-      <script>
-        const inputs = document.querySelectorAll('input[type=range], select');
-        const output = document.getElementById('coherenceScore');
-        const overlay = document.getElementById('riskOverlay');
-
-        function updateScore() {
-          const base = parseInt(document.getElementById('category').value);
-          const voltage = parseInt(document.getElementById('voltage').value);
-          const pattern = parseInt(document.getElementById('pattern').value);
-          const fragment = parseInt(document.getElementById('fragment').value);
-          const noise = parseInt(document.getElementById('noise').value);
-          const mod = (voltage + pattern + (10 - fragment) + (10 - noise)) / 4 * 5;
-          const score = Math.round((base + mod) / 2);
-
-          output.textContent = `Score: ${score}`;
-          overlay.textContent = score >= 80 ? 'Risk Level: Low' : score >= 50 ? 'Risk Level: Moderate' : 'Risk Level: High';
-          overlay.style.color = score >= 80 ? 'green' : score >= 50 ? 'orange' : 'red';
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Food Coherence System | Bioelectric Nutrition & Metabolic Toxemia</title>
+    <style>
+        /* --- MEDICAL PROFESSIONAL THEME & CSS --- */
+        :root {
+            --primary-blue: #0047AB; /* Cobalt Blue as mentioned in Source [1] */
+            --dark-navy: #0F172A;
+            --medical-light: #F8FAFC;
+            --text-grey: #334155;
+            --alert-red: #B91C1C;
+            --success-green: #15803D;
+            --white: #ffffff;
         }
 
-        inputs.forEach(input => input.addEventListener('input', updateScore));
-        updateScore();
-      </script>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-grey);
+            background-color: var(--medical-light);
+        }
+
+        /* TYPOGRAPHY */
+        h1, h2, h3 {
+            color: var(--dark-navy);
+            font-weight: 700;
+        }
+
+        h1 { font-size: 2.5rem; letter-spacing: -0.02em; }
+        h2 { font-size: 2rem; margin-bottom: 1rem; position: relative; }
+        h2::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--primary-blue);
+            margin-top: 10px;
+        }
+
+        p { margin-bottom: 1.5rem; font-size: 1.1rem; }
+
+        /* HEADER & HERO */
+        header {
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--dark-navy);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        nav a:hover { color: var(--primary-blue); }
+
+        .hero {
+            margin-top: 80px;
+            background: linear-gradient(135deg, var(--dark-navy) 0%, var(--primary-blue) 100%);
+            color: var(--white);
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 { color: var(--white); margin-bottom: 1.5rem; }
+        .hero p { font-size: 1.4rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
+
+        /* LAYOUT & GRID */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        /* CARD STYLES */
+        .card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--primary-blue);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-5px); }
+        
+        .card.alert { border-top-color: var(--alert-red); }
+        .card.success { border-top-color: var(--success-green); }
+
+        /* VISUALS PLACEHOLDERS */
+        .visual-container {
+            background-color: #e2e8f0;
+            border: 1px dashed #94a3b8;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+        
+        .visual-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .caption {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* SECTIONS */
+        .section-light { background-color: var(--white); }
+        .section-dark { background-color: var(--dark-navy); color: var(--white); }
+        .section-dark h2 { color: var(--white); }
+        .section-dark p { opacity: 0.9; }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .footer {
+            background: var(--dark-navy);
+            color: #94a3b8;
+            padding: 3rem 2rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">Bioelectric<span style="color:var(--dark-navy)">Health</span></div>
+            <nav>
+                <ul>
+                    <li><a href="#paradigm">The Paradigm</a></li>
+                    <li><a href="#toxemia">Metabolic Toxemia</a></li>
+                    <li><a href="#upstream">The System</a></li>
+                    <li><a href="#solution">Coherence Score</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="container">
+            <h1>Reframing Nutrition: From Fuel to Information</h1>
+            <p>Moving beyond the "Calorie Model" to understand Food Coherence, Bioelectric Signaling, and the Immune Response to Ultra-Processed Foods.</p>
+            <br>
+            <a href="#paradigm" style="color: white; border: 1px solid white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Explore the Science</a>
+        </div>
     </section>
 
-    <section id="law">
-      <h2>Legal Alignment</h2>
-      <p>The Food Coherence system fulfills legal gaps in food safety regulation, particularly in the EU:</p>
-      <ul>
-        <li><strong>Article 14:</strong> Covers chronic toxicity and physiological dysfunction, not just acute harm.</li>
-        <li><strong>Article 2:</strong> Redefines food as a systemic exposure, not a product unit.</li>
-        <li><strong>Article 16:</strong> Prohibits misleading omissions — absence of coherence data now qualifies.</li>
-      </ul>
+    <!-- SECTION 1: FOOD COHERENCE PARADIGM -->
+    <section id="paradigm" class="container">
+        <div class="grid-2">
+            <div>
+                <h2>The Bioelectric Signal</h2>
+                <p>Current nutrition models view food merely as chemical fuel. The <strong>Food Coherence System (FCS)</strong> argues that food acts as an instructional signal modulating the body's collective regulatory intelligence.</p>
+                <p><strong>Coherence (Signal):</strong> Whole foods stabilize cellular membrane potentials and support high mitochondrial voltage ($\Delta\psi_m$).</p>
+                <p><strong>Incoherence (Noise):</strong> Ultra-Processed Foods (UPFs) introduce "Bioelectric Mutagens"—dietary exposures that increase signaling noise, causing cells to drift from their target morphology.</p>
+            </div>
+            <div class="visual-container">
+                <!-- PLACEHOLDER FOR IMAGE [2] OR [3] -->
+                <img src="images/Food Coherence Bioelectric signal.jpeg" alt="Food Coherence: Nutrition as a Bioelectric Signal">
+                <p class="caption">Figure 1: Coherent Food stabilizes internal electric fields, while UPFs induce 'static' and depolarization. (Source: Food Coherence Bioelectric signal.jpeg)</p>
+            </div>
+        </div>
     </section>
 
-    <section id="videos">
-      <h2>Educational Videos</h2>
-      <p>Support your understanding of coherence nutrition through clinical and public health videos:</p>
-      <iframe width="100%" height="315" src="https://www.youtube.com/embed/WKQt8-Zmjqo" title="Video 1" allowfullscreen></iframe>
-      <iframe width="100%" height="315" src="https://www.youtube.com/embed/X7dJBhWuA_o" title="Video 2" allowfullscreen></iframe>
-      <iframe width="100%" height="315" src="https://www.youtube.com/embed/WhBaLUwAjzc" title="Video 3" allowfullscreen></iframe>
-      <iframe width="100%" height="315" src="https://www.youtube.com/embed/0977o43L8S4" title="Video 4" allowfullscreen></iframe>
-      <iframe width="100%" height="315" src="https://www.youtube.com/embed/yem9vS09DbY" title="Video 5" allowfullscreen></iframe>
+    <!-- SECTION 2: METABOLIC TOXEMIA -->
+    <section id="toxemia" class="section-light" style="padding: 4rem 0;">
+        <div class="container">
+            <h2>Metabolic Toxemia: The Body Under Siege</h2>
+            <p>Obesity and chronic fatigue are often not failures of discipline, but functional defense mechanisms against chronic additive accumulation.</p>
+            
+            <div class="grid-2">
+                <div class="visual-container">
+                    <!-- PLACEHOLDER FOR IMAGE [4] -->
+                    <img src="images/Metabolic_Toxemia_The_Biology_of_Chronic_Accumulation.pdf_image.jpg" alt="Adipose Tissue as Quarantine Zone">
+                    <p class="caption">Figure 2: The 'Quarantine Zone' Hypothesis. Adipose tissue sequesters lipophilic toxins to protect vital organs.</p>
+                </div>
+                <div>
+                    <h3>The Mechanism of Defense</h3>
+                    <ul>
+                        <li><strong>The Breach:</strong> Emulsifiers (like Polysorbate 80) erode the mucus layer of the gut, allowing endotoxins (LPS) to enter the bloodstream (Leaky Gut).</li>
+                        <li><strong>The Immune Response:</strong> The body enters a "Cold War" state of low-grade chronic inflammation.</li>
+                        <li><strong>The Obesity Paradox:</strong> Fat tissue acts as a buffer to sequester lipophilic toxins. Rapid weight loss can trigger "re-intoxication," causing the body to halt fat burning as a survival strategy.</li>
+                    </ul>
+                    <div class="card alert">
+                        <h4>Clinical Insight</h4>
+                        <p>Standard labs often return "Normal" because they measure static chemistry, not dynamic regulation or bioelectric resilience.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <section id="contact">
-      <h2>Contact & Collaborate</h2>
-      <p><strong>Email:</strong> <a href="mailto:coherencedashboard@gmail.com">coherencedashboard@gmail.com</a></p>
-      <p>Medical researchers, health departments, and food regulators are invited to collaborate on pilot studies and protocol development.</p>
+    <!-- SECTION 3: THE UPSTREAM ADDRESS -->
+    <section id="upstream" class="section-dark">
+        <div class="container">
+            <h2>Chronic Disease Has an Upstream Address</h2>
+            <p>Individual choices occur within an engineered environment. The current health crisis is a predictable output of industrial design.</p>
+            
+            <div class="grid-3">
+                <div class="card">
+                    <h3 style="color: var(--primary-blue);">1. Commodity Incentives</h3>
+                    <p>Subsidies for corn and soy make high-fructose corn syrup and soybean oil artificially cheap, becoming the default substrate for processed foods.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--primary-blue);">2. The Processing Environment</h3>
+                    <p>Foods are optimized for shelf-life and profit, creating "Industrial Opacity." Consumers cannot see the chemical reality behind the package.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--primary-blue);">3. The Hall Effect</h3>
+                    <p>As proven by the NIH Hall et al. trial: Processing itself—not just nutrients—drives overconsumption (+500 kcal/day).</p>
+                </div>
+            </div>
+            
+            <div class="visual-container" style="margin-top: 2rem; background: transparent; border: none;">
+                 <!-- PLACEHOLDER FOR IMAGE [5] or [6] -->
+                 <img src="images/Chronic_Disease_Upstream_Address.png" alt="Upstream Drivers of Chronic Disease" style="max-width: 80%;">
+                 <p class="caption" style="color: #cbd5e1;">Figure 3: The industrial flow from upstream subsidies to downstream chronic disease.</p>
+            </div>
+        </div>
     </section>
-  </main>
 
-  <footer>
-    <p>&copy; 2026 Food Coherence Initiative | Science-first Labeling for Public Health</p>
-  </footer>
+    <!-- SECTION 4: THE SOLUTION - FOOD COHERENCE LABEL -->
+    <section id="solution" class="container">
+        <h2>The Solution: Measuring Matrix Integrity</h2>
+        <p>We cannot manage what we do not measure. The proposed <strong>Food Coherence Score (0-100)</strong> assesses food matrix integrity, not just nutrient density.</p>
+
+        <div class="grid-2">
+            <div>
+                <p>Current labels (Nutri-Score, FDA panel) focus on "State" (sugar, fat levels). The Food Coherence Score focuses on "Integrity" and "Processing":</p>
+                <div class="grid-3" style="gap: 1rem;">
+                    <div class="card success" style="text-align: center; padding: 1rem;">
+                        <h3 style="color: var(--success-green); margin:0;">80-100</h3>
+                        <p style="font-size: 0.9rem; margin:0;">High Coherence<br>(Minimally Processed)</p>
+                    </div>
+                    <div class="card" style="text-align: center; padding: 1rem; border-top-color: orange;">
+                        <h3 style="color: orange; margin:0;">50-79</h3>
+                        <p style="font-size: 0.9rem; margin:0;">Moderate Coherence<br>(Conditionally Acceptable)</p>
+                    </div>
+                    <div class="card alert" style="text-align: center; padding: 1rem;">
+                        <h3 style="color: var(--alert-red); margin:0;">0-49</h3>
+                        <p style="font-size: 0.9rem; margin:0;">Low Coherence<br>(Ultra-Processed)</p>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem;"><strong>Methodology:</strong> Uses optical spectral analysis and dielectric stability metrics to detect matrix disruption and oxidation typical of UPFs.</p>
+            </div>
+            <div class="visual-container">
+                 <!-- PLACEHOLDER FOR IMAGE [7] or [8] -->
+                 <img src="images/Food Coherence Label.jpeg" alt="Proposed Food Coherence Label on Packaging">
+                 <p class="caption">Figure 4: Concept for Front-of-Pack Coherence Labeling.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p><strong>Academic & Research Disclaimer</strong></p>
+            <p style="font-size: 0.8rem; max-width: 800px; margin: 0 auto;">
+                The concepts presented here (Food Coherence, Bioelectric Mutagens, Metabolic Toxemia Protocol) are hypothesis-generating frameworks based on the "Prevent-OO 2026" research call and associated perspective papers. This content is for educational purposes only and does not constitute medical advice.
+            </p>
+            <br>
+            <p>&copy; 2026 Food Coherence Research Initiative.</p>
+        </div>
+    </footer>
+
+    <!-- SIMPLE SCRIPT FOR SMOOTH SCROLL -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
 </html>
