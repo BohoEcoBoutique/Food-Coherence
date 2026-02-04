@@ -5,476 +5,411 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Coherence System | Bioelectric Dashboard</title>
     
-    <!-- External Libraries for UX (Icons, Charts, PDF) -->
+    <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- UX THEME: "MEDICAL FUTURISM" --- */
+        /* --- THEME: BIO-DIGITAL TWIN --- */
         :root {
-            /* Source [6]: "Signal Quality (Cobalt Blue #0047AB)" */
-            --primary-blue: #0047AB; 
+            --primary-blue: #0047AB; /* Cobalt Blue */
             --deep-navy: #0f172a;
-            --medical-bg: #f8fafc;
+            --medical-bg: #f1f5f9;
             --surface-white: #ffffff;
             --text-main: #334155;
-            --text-light: #64748b;
             
-            /* Status Colors */
-            --signal-green: #10b981; /* Coherence */
-            --noise-red: #ef4444;     /* Mutagen/Static */
-            --warning-orange: #f59e0b;
+            --signal-green: #10b981; 
+            --noise-red: #ef4444;    
+            --goldilocks-gold: #f59e0b;
             
-            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --radius: 12px;
+            --radius: 16px;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
 
-        /* RESET & BASE */
         * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--medical-bg); color: var(--text-main); line-height: 1.6; }
 
-        /* NAVIGATION - Sticky & Glassmorphism */
+        /* NAV */
         nav {
             position: sticky; top: 0; z-index: 1000;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid #e2e8f0;
             padding: 1rem 2rem;
         }
         .nav-content { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.5rem; font-weight: 800; color: var(--deep-navy); letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
-        .logo i { color: var(--primary-blue); }
-        .nav-links a { text-decoration: none; color: var(--text-main); font-weight: 600; margin-left: 2rem; transition: color 0.2s; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .nav-links a:hover { color: var(--primary-blue); }
+        .logo { font-size: 1.4rem; font-weight: 800; color: var(--deep-navy); letter-spacing: -0.5px; }
+        .logo span { color: var(--primary-blue); }
+        .nav-links a { margin-left: 2rem; text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; }
 
-        /* HERO SECTION - "The Signal" */
+        /* HERO */
         .hero {
-            background: linear-gradient(135deg, var(--deep-navy) 0%, #1e293b 100%);
-            color: var(--surface-white);
-            padding: 6rem 2rem;
-            position: relative;
-            overflow: hidden;
+            background: radial-gradient(circle at top right, #1e293b, var(--deep-navy));
+            color: white; padding: 6rem 2rem; text-align: center;
         }
-        .hero::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            /* Abstract Sine Wave Background representing Coherence [2] */
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='20' viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21.184 20c.357-.13.72-.264 1.088-.402l1.768-.661C33.64 15.347 39.647 14 50 14c10.271 0 15.36 1.222 24.629 4.928.955.374 1.949.747 2.996 1.08l1.19.29.993-1.741c-.633-.36-1.291-.703-1.97-1.026-8.591-4.076-14.39-5.535-24.839-5.535-11.233 0-16.126 1.488-25.79 5.37-1.396.56-2.822 1.09-4.28 1.57L21.184 20z' fill='%230047AB' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
-            opacity: 0.3;
-        }
-        .hero-content { max-width: 900px; margin: 0 auto; text-align: center; position: relative; z-index: 10; }
-        .hero h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 1.5rem; letter-spacing: -1px; line-height: 1.1; }
-        .hero p { font-size: 1.25rem; opacity: 0.9; max-width: 700px; margin: 0 auto 2.5rem; }
-        .hero-btn {
-            background: var(--primary-blue); color: white; padding: 1rem 2.5rem; border-radius: 50px;
-            text-decoration: none; font-weight: 700; transition: transform 0.2s, box-shadow 0.2s;
-            display: inline-flex; align-items: center; gap: 10px;
-        }
-        .hero-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0, 71, 171, 0.4); }
+        .hero h1 { font-size: 3rem; margin-bottom: 1rem; letter-spacing: -1px; }
+        .hero p { max-width: 700px; margin: 0 auto 2rem; font-size: 1.2rem; opacity: 0.9; }
 
-        /* GRID LAYOUTS */
-        .container { max-width: 1280px; margin: 0 auto; padding: 4rem 2rem; }
-        .section-title { text-align: center; margin-bottom: 3rem; }
-        .section-title h2 { font-size: 2.2rem; color: var(--deep-navy); margin-bottom: 0.5rem; }
-        .section-title p { color: var(--text-light); max-width: 600px; margin: 0 auto; }
+        /* SECTIONS */
+        .container { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
+        .section-header { text-align: center; margin-bottom: 3rem; }
+        .section-header h2 { font-size: 2.2rem; color: var(--deep-navy); margin-bottom: 0.5rem; }
         
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
         .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
 
-        /* INTERACTIVE CARDS [Source 38 - The Gaps] */
-        .feature-card {
-            background: var(--surface-white); padding: 2rem; border-radius: var(--radius);
-            box-shadow: var(--shadow-card); transition: all 0.3s ease; border-top: 4px solid transparent;
+        /* CARDS & TOOLS */
+        .card { background: white; padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow); }
+        
+        /* INTERACTIVE TOOL STYLES */
+        .tool-box {
+            border: 1px solid #e2e8f0; border-radius: var(--radius); overflow: hidden; background: white; margin-bottom: 2rem;
         }
-        .feature-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); border-top-color: var(--primary-blue); }
-        .feature-icon { font-size: 2rem; color: var(--primary-blue); margin-bottom: 1.5rem; }
-        .feature-card h3 { margin-bottom: 1rem; color: var(--deep-navy); }
+        .tool-header {
+            background: var(--deep-navy); color: white; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .tool-body { padding: 2rem; }
 
-        /* TOGGLE SECTION (Paradigm Shift) */
-        .paradigm-toggle {
-            background: var(--white); border-radius: 20px; overflow: hidden; margin-top: 2rem;
-            box-shadow: var(--shadow-card); display: flex;
+        /* LABEL DECODER */
+        .label-container { position: relative; min-height: 300px; }
+        .ingredient-list { font-family: 'Courier New', monospace; font-size: 0.9rem; line-height: 1.8; }
+        .harmful { background-color: #fecaca; padding: 2px 4px; border-radius: 4px; transition: all 0.5s; }
+        .switch-btn {
+            background: var(--primary-blue); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 50px; 
+            font-weight: 700; cursor: pointer; display: block; margin: 1rem auto; width: fit-content;
         }
-        .paradigm-side { flex: 1; padding: 3rem; transition: 0.3s; cursor: pointer; position: relative; }
-        .paradigm-side:hover { background: #f1f5f9; }
-        .paradigm-side.active { background: #e0f2fe; }
-        .paradigm-side.active h3 { color: var(--primary-blue); }
+        .switch-btn:hover { transform: scale(1.05); }
 
-        /* DASHBOARD / CALCULATOR STYLES */
-        .dashboard-wrapper {
-            background: var(--surface-white); border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden; border: 1px solid #e2e8f0; display: grid; grid-template-columns: 400px 1fr;
-        }
-        
-        /* Left Control Panel */
-        .controls { background: #f8fafc; padding: 2.5rem; border-right: 1px solid #e2e8f0; }
-        .control-group { margin-bottom: 2rem; }
-        label { display: block; font-weight: 700; margin-bottom: 0.8rem; color: var(--text-main); font-size: 0.9rem; }
-        
-        /* Custom Inputs */
-        select, input[type="range"] { width: 100%; display: block; }
-        select { padding: 0.8rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background: white; cursor: pointer; }
-        
-        /* Range Sliders with Track Styling */
-        input[type=range] { -webkit-appearance: none; height: 6px; background: #cbd5e1; border-radius: 5px; outline: none; }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 22px; height: 22px; background: var(--primary-blue);
-            border-radius: 50%; cursor: pointer; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
+        /* ENZYME TUNER */
+        .meter-container { height: 20px; background: #e2e8f0; border-radius: 10px; margin: 2rem 0; position: relative; overflow: hidden; }
+        .meter-fill { height: 100%; width: 50%; background: var(--goldilocks-gold); transition: width 0.3s, background 0.3s; }
+        .slider-group { margin-bottom: 1.5rem; }
+        .slider-group label { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 0.5rem; }
+        input[type="range"] { width: 100%; accent-color: var(--primary-blue); }
 
-        /* Right Visualization Panel */
-        .viz-panel { padding: 2.5rem; display: flex; flex-direction: column; }
-        .chart-container { position: relative; height: 300px; width: 100%; display: flex; justify-content: center; margin-bottom: 2rem; }
-        
-        .score-display {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 1.5rem; background: var(--deep-navy); color: white; border-radius: 12px;
-            margin-bottom: 2rem;
-        }
-        .score-value { font-size: 2.5rem; font-weight: 800; line-height: 1; }
-        .score-label { font-size: 0.9rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+        /* IMMUNE BOUNCER */
+        .bouncer-stage { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 2rem; text-align: center; }
+        .molecule { font-size: 3rem; margin-bottom: 1rem; display: inline-block; animation: float 3s infinite ease-in-out; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        .scan-result { font-weight: 800; font-size: 1.2rem; margin-top: 1rem; min-height: 1.5em; }
 
-        .analysis-box {
-            background: #fff; border: 1px solid #e2e8f0; padding: 1.5rem; border-radius: 12px; margin-top: auto;
+        /* DIGESTIVE MAP */
+        .digest-step { 
+            padding: 1rem; border-left: 4px solid #cbd5e1; margin-bottom: 1rem; cursor: pointer; transition: 0.3s; 
         }
-        .alert-pill {
-            display: inline-block; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
-            background: #fee2e2; color: #b91c1c; margin-bottom: 0.5rem;
-        }
-        
+        .digest-step:hover, .digest-step.active { border-left-color: var(--primary-blue); background: #f1f5f9; }
+        .digest-detail { display: none; padding-top: 0.5rem; color: #64748b; font-size: 0.9rem; }
+
         /* FOOTER */
         footer { background: var(--deep-navy); color: #94a3b8; padding: 4rem 2rem; text-align: center; font-size: 0.9rem; }
-        footer a { color: white; text-decoration: none; }
-
-        @media (max-width: 900px) {
-            .dashboard-wrapper { grid-template-columns: 1fr; }
-            .controls { border-right: none; border-bottom: 1px solid #e2e8f0; }
-            .grid-2 { grid-template-columns: 1fr; }
-            .hero h1 { font-size: 2.5rem; }
-        }
     </style>
 </head>
 <body>
 
-    <!-- NAV -->
     <nav>
         <div class="nav-content">
-            <div class="logo">
-                <i class="fa-solid fa-wave-square"></i>
-                Food<span>Coherence</span>
-            </div>
+            <div class="logo">Food<span>Coherence</span></div>
             <div class="nav-links">
-                <a href="#paradigm">Paradigm</a>
-                <a href="#toxemia">Toxemia</a>
-                <a href="#calculator" style="color:var(--primary-blue);">Calculator</a>
+                <a href="#simulation-lab">Simulation Lab</a>
+                <a href="#calculator">Calculator</a>
+                <a href="#upstream">Upstream</a>
             </div>
         </div>
     </nav>
 
-    <!-- HERO: "Clear Decisions Start on Your Plate" [Source 1] -->
-    <header class="hero">
-        <div class="hero-content">
-            <h1>Food is Not Just Fuel.<br>It's Information.</h1>
-            <p>Moving beyond the "Calorie Model" to understand bioelectric signaling. Is your meal building coherence, or is it creating chaos?</p>
-            <a href="#calculator" class="hero-btn">
-                <i class="fa-solid fa-calculator"></i> Measure Your Coherence
-            </a>
+    <div class="hero">
+        <div class="nav-content"> <!-- Reusing container for width -->
+            <h1>From Fuel to Information</h1>
+            <p>Food is a bioelectric instruction signal. Are you building coherence or creating chaos?</p>
         </div>
-    </header>
+    </div>
 
-    <!-- SECTION 1: THE SIGNAL VS NOISE [Source 5, 173] -->
-    <section id="paradigm" class="container">
-        <div class="section-title">
-            <h2>The Bioelectric Paradigm</h2>
-            <p>Your brain and body function like an orchestra. Food is the tuning fork.</p>
+    <!-- SECTION 1: CORE CONCEPTS (Text Fixed) -->
+    <section class="container">
+        <div class="grid-2">
+            <div>
+                <img src="images/bioelectric_signal.jpeg" alt="Bioelectric Signal" style="width:100%; border-radius: var(--radius); box-shadow: var(--shadow);">
+            </div>
+            <div>
+                <h2>The Signal vs. The Noise</h2>
+                <p>Whole foods provide stable instructions that maintain mitochondrial voltage (&Delta;&psi;<sub>m</sub>) and pattern memory. The immune system recognizes this as "Self."</p>
+                <br>
+                <p><strong>The Problem:</strong> Ultra-Processed Foods (UPFs) act as "Bioelectric Mutagens." They introduce signaling noise—a form of static that confuses cellular receptors. This isn't just about empty calories; it's about compromised information transfer.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: SIMULATION LAB (New Interactive Tools) -->
+    <section id="simulation-lab" class="container">
+        <div class="section-header">
+            <h2>The Simulation Lab</h2>
+            <p>Explore the biological mechanisms hidden beneath the packaging.</p>
         </div>
 
         <div class="grid-2">
-            <div>
-                <img src="images/bioelectric_signal.jpeg" alt="Bioelectric Signal Comparison" style="width:100%; border-radius: var(--radius); box-shadow: var(--shadow-card);">
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 10px; text-align: center;">Figure 1: Coherent instructional signals vs. Bioelectric Mutagens [Source 173]</p>
-            </div>
-            <div>
-                <div class="feature-card" style="margin-bottom: 1.5rem;">
-                    <i class="fa-solid fa-bolt feature-icon" style="color: var(--signal-green);"></i>
-                    <h3>Coherence (The Signal)</h3>
-                    <p>Whole foods provide stable instructions that maintain mitochondrial voltage ($\Delta\psi_m$) and pattern memory. The immune system recognizes this as "Self."</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fa-solid fa-burst feature-icon" style="color: var(--noise-red);"></i>
-                    <h3>Mutagens (The Noise)</h3>
-                    <p>Ultra-Processed Foods (UPFs) act as "Bioelectric Mutagens." They create signaling static, forcing the system into low-power, inflammatory states.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 2: TOXEMIA & QUARANTINE [Source 92, 73] -->
-    <section id="toxemia" style="background: white; padding: 4rem 0;">
-        <div class="container">
-            <div class="grid-2">
-                <div>
-                    <h2 style="margin-bottom: 1.5rem;">Why You Can't Lose Weight</h2>
-                    <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">The "Quarantine Zone" Hypothesis</h3>
-                    <p style="margin-bottom: 1rem;">It's not just about calories. When you consume lipophilic (fat-loving) toxins from preservatives and plastics, your body must protect vital organs (Heart, Brain).</p>
-                    <p style="margin-bottom: 1.5rem;"><strong>The Defense:</strong> The body creates adipose tissue (fat) to sequester these toxins. Losing weight rapidly releases them, causing "Re-intoxication," so the body halts fat loss to protect you [Source 92].</p>
-                    <div style="padding: 1rem; background: #fff1f2; border-left: 4px solid var(--noise-red); border-radius: 4px;">
-                        <strong><i class="fa-solid fa-triangle-exclamation"></i> The Cocktail Effect:</strong> <br>
-                        Testing additives in isolation (A + B) misses the synergy (A x B). This synergy creates the "Metabolic Noise" that confuses the immune system [Source 145].
-                    </div>
-                </div>
-                <div style="position: relative;">
-                     <img src="images/toxemia_mechanism.jpg" alt="Adipose Quarantine Zone" style="width:100%; border-radius: var(--radius); box-shadow: var(--shadow-card);">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 3: INTERACTIVE CALCULATOR [Updated with Source 156 Salami Logic] -->
-    <section id="calculator" class="container">
-        <div class="section-title">
-            <h2>Clinical Coherence Calculator</h2>
-            <p>Estimate the "Matrix Integrity" and bioelectric impact of food.</p>
-        </div>
-
-        <div class="dashboard-wrapper" id="clinical-report">
             
-            <!-- CONTROLS -->
-            <div class="controls">
-                <div class="control-group">
-                    <label>Quick Preset (Simulation)</label>
-                    <select id="food-preset" onchange="applyPreset()">
-                        <option value="custom">-- Custom Analysis --</option>
-                        <option value="apple">Organic Apple (Whole Food)</option>
-                        <option value="bread">Artisan Sourdough (Processed)</option>
-                        <option value="salami">Commercial Salami (UPF/Nitrites)</option>
-                        <option value="soda">Diet Soda (UPF/Artificial)</option>
-                    </select>
+            <!-- TOOL 1: THE LABEL DECODER -->
+            <div class="tool-box">
+                <div class="tool-header">
+                    <span><i class="fa-solid fa-eye"></i> Label Decoder</span>
                 </div>
-
-                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 2rem 0;">
-
-                <div class="control-group">
-                    <label>NOVA Classification [Source 141]</label>
-                    <select id="nova-input" onchange="calculateCoherence()">
-                        <option value="1">NOVA 1: Unprocessed / Minimally Processed</option>
-                        <option value="2">NOVA 2: Processed Culinary Ingredients</option>
-                        <option value="3">NOVA 3: Processed Foods</option>
-                        <option value="4">NOVA 4: Ultra-Processed (UPF)</option>
-                    </select>
-                </div>
-
-                <div class="control-group">
-                    <div style="display: flex; justify-content: space-between;">
-                        <label>Matrix Fragmentation</label>
-                        <span id="val-frag" style="font-size: 0.8rem; font-weight: 700;">5</span>
+                <div class="tool-body label-container">
+                    <h3 style="text-align: center; margin-bottom: 1rem;">Product: Cured Salami</h3>
+                    <div id="label-text" class="ingredient-list">
+                        Pork, Salt, <span class="chem">Sodium Nitrite</span>, <span class="chem">Sodium Ascorbate</span>, <span class="chem">Dextrose</span>, <span class="chem">Phosphates</span>, Spices, <span class="chem">Smoke Flavoring</span>.
                     </div>
-                    <input type="range" id="input-frag" min="0" max="10" value="5" oninput="calculateCoherence()">
-                    <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 5px;">Physical destruction of fiber structure.</p>
-                </div>
-
-                <div class="control-group">
-                    <div style="display: flex; justify-content: space-between;">
-                        <label>Bioelectric Noise (Mutagens)</label>
-                        <span id="val-noise" style="font-size: 0.8rem; font-weight: 700;">5</span>
-                    </div>
-                    <input type="range" id="input-noise" min="0" max="10" value="5" oninput="calculateCoherence()">
-                    <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 5px;">Presence of emulsifiers, nitrites, sweeteners.</p>
-                </div>
-            </div>
-
-            <!-- VISUALIZATION -->
-            <div class="viz-panel">
-                <div class="score-display">
-                    <div>
-                        <div class="score-label">Coherence Score</div>
-                        <div class="score-value" id="final-score">--</div>
-                    </div>
-                    <div style="text-align: right;">
-                        <div class="score-label">Risk Level</div>
-                        <div id="risk-text" style="font-weight: 700; color: var(--signal-green);">LOW</div>
-                    </div>
-                </div>
-
-                <!-- Chart.js Canvas -->
-                <div class="chart-container">
-                    <canvas id="coherenceChart"></canvas>
-                </div>
-
-                <div class="analysis-box">
-                    <span class="alert-pill" id="analysis-badge">Waiting for Input</span>
-                    <p id="analysis-text" style="font-size: 0.9rem; margin-top: 0.5rem; color: var(--text-main);">
-                        Select a food or adjust sliders to see the bioelectric impact on your immune system.
+                    <button class="switch-btn" onclick="toggleLabel()">Digest This Label</button>
+                    <p id="label-caption" style="text-align: center; margin-top: 1rem; font-size: 0.8rem; color: #64748b;">
+                        Standard Legal View: Ingredients listed as added.
                     </p>
                 </div>
-
-                <button onclick="downloadPDF()" style="margin-top: 1rem; background: transparent; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--text-light); font-size: 0.85rem;">
-                    <i class="fa-solid fa-download"></i> Download Clinical Report
-                </button>
             </div>
+
+            <!-- TOOL 2: IMMUNE BOUNCER -->
+            <div class="tool-box">
+                <div class="tool-header">
+                    <span><i class="fa-solid fa-shield-halved"></i> The Immune Bouncer</span>
+                </div>
+                <div class="tool-body">
+                    <p style="font-size: 0.9rem; margin-bottom: 1rem;">The immune system checks "Molecular IDs." Friend or Foe?</p>
+                    <div class="bouncer-stage">
+                        <div id="molecule-display" class="molecule">🥦</div>
+                        <div id="bouncer-decision" class="scan-result" style="color: var(--signal-green);">SCANNING...</div>
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+                        <button class="switch-btn" style="background:#64748b; font-size: 0.8rem;" onclick="scanFood('whole')">Scan Whole Food</button>
+                        <button class="switch-btn" style="background:#ef4444; font-size: 0.8rem;" onclick="scanFood('upf')">Scan UPF</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="grid-2">
+
+            <!-- TOOL 3: GOLDILOCKS ENZYME TUNER -->
+            <div class="tool-box">
+                <div class="tool-header">
+                    <span><i class="fa-solid fa-gear"></i> Enzyme Tuner</span>
+                </div>
+                <div class="tool-body">
+                    <p style="font-size: 0.9rem;">Enzymes need a perfect pH and Temperature to function.</p>
+                    
+                    <div class="meter-container">
+                        <div id="enzyme-meter" class="meter-fill" style="width: 100%;"></div>
+                    </div>
+                    <div style="text-align: center; font-weight: bold; margin-bottom: 1rem;" id="enzyme-status">Efficiency: 100%</div>
+
+                    <div class="slider-group">
+                        <label>pH Balance (Acidity) <span id="ph-val">7.4</span></label>
+                        <input type="range" id="ph-slider" min="6.0" max="8.0" step="0.1" value="7.4" oninput="updateEnzyme()">
+                    </div>
+                    <div class="slider-group">
+                        <label>Inflammation (Temp °C) <span id="temp-val">37</span></label>
+                        <input type="range" id="temp-slider" min="36" max="42" step="0.5" value="37" oninput="updateEnzyme()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOL 4: DIGESTIVE CONVEYOR BELT -->
+            <div class="tool-box">
+                <div class="tool-header">
+                    <span><i class="fa-solid fa-road"></i> Digestive Map (7-Meters)</span>
+                </div>
+                <div class="tool-body" style="max-height: 400px; overflow-y: auto;">
+                    <div class="digest-step" onclick="toggleDigest(this)">
+                        <strong>1. The Mouth (Chemical Attack)</strong>
+                        <div class="digest-detail">Salivary Amylase turns bread sweet immediately. It's not just chewing; it's chemistry.</div>
+                    </div>
+                    <div class="digest-step" onclick="toggleDigest(this)">
+                        <strong>2. The Stomach (The Safety Lock)</strong>
+                        <div class="digest-detail">Pepsinogen is a "locked safe." It only activates into Pepsin when acid hits it, preventing the stomach from eating itself.</div>
+                    </div>
+                    <div class="digest-step" onclick="toggleDigest(this)">
+                        <strong>3. The Barrier Breach (Gut Wall)</strong>
+                        <div class="digest-detail">Emulsifiers (UPFs) act like detergents, dissolving the mucus layer and poking holes in the "fence."</div>
+                    </div>
+                    <div class="digest-step" onclick="toggleDigest(this)">
+                        <strong>4. Absorption (Tennis Court)</strong>
+                        <div class="digest-detail">The surface area of the small intestine is ~250 sq meters (a tennis court) folded up to maximize nutrient capture.</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
-    <!-- SECTION 4: THE UPSTREAM ADDRESS [Source 133, 172] -->
-    <section id="upstream" class="container">
-        <div class="section-title">
-            <h2>The Upstream Address</h2>
-            <p>Chronic disease is a predictable output of industrial design. We must change the default.</p>
+    <!-- SECTION 3: SYSTEM SLIDER (Upstream) -->
+    <section id="upstream" class="container" style="background: white; border-radius: var(--radius); padding: 3rem;">
+        <div class="section-header">
+            <h2>The Upstream System Slider</h2>
+            <p>Health is an output of system design. Change the default, change the outcome.</p>
         </div>
-        <img src="images/upstream_address.png" alt="Upstream River Flow" style="width: 100%; border-radius: var(--radius); margin-bottom: 2rem;">
         
-        <div class="grid-3">
-            <div class="feature-card">
-                <i class="fa-solid fa-industry feature-icon"></i>
-                <h3>Commodity Incentives</h3>
-                <p>Subsidies make corn/soy cheap, making HFCS and Soybean oil the default substrate for processed food [Source 135].</p>
-            </div>
-            <div class="feature-card">
-                <i class="fa-solid fa-eye-slash feature-icon"></i>
-                <h3>Industrial Opacity</h3>
-                <p>Supply chains function better when consumers do not see the full chain. Origins are obscured [Source 104].</p>
-            </div>
-            <div class="feature-card">
-                <i class="fa-solid fa-scale-unbalanced feature-icon"></i>
-                <h3>Externalities</h3>
-                <p>High-throughput production scales by concentrating harms (waste, pollution) onto public health [Source 105].</p>
+        <img src="images/upstream_address.png" alt="Upstream System" style="width: 100%; border-radius: 8px; margin-bottom: 2rem;">
+
+        <div style="background: #f8fafc; padding: 2rem; border-radius: 12px;">
+            <label style="display:flex; justify-content:space-between; margin-bottom: 1rem;">
+                <span>Current Industrial Model</span>
+                <span>Regenerative Future</span>
+            </label>
+            <input type="range" id="system-slider" min="0" max="100" value="0" oninput="updateSystem()">
+            
+            <div id="system-feedback" style="margin-top: 1.5rem; font-weight: 600; color: var(--primary-blue);">
+                Status: Commodity Subsidies (Corn/Soy) dominate. Default food is UPF.
             </div>
         </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer>
-        <div class="container">
-            <p style="margin-bottom: 1rem; font-weight: 700; color: white;">Food Coherence Research Initiative (2026)</p>
-            <p style="max-width: 600px; margin: 0 auto; opacity: 0.7;">
-                Disclaimer: The "Food Coherence Score" and "Bioelectric Mutagen" concepts are hypothesis-generating frameworks based on the Prevent-OO 2026 research call. Not medical advice.
-            </p>
+    <!-- SECTION 4: CALCULATOR (Simplified for Context) -->
+    <section id="calculator" class="container">
+        <div class="section-header">
+            <h2>Metabolic Calculator</h2>
+            <p>Estimate the bioelectric impact of your food choices.</p>
         </div>
+        <!-- Embedding previously generated chart code structure simply here -->
+        <div class="tool-box" style="padding: 2rem; text-align: center;">
+            <p>Select a NOVA Category to see the impact on Mitochondrial Voltage (&Delta;&psi;<sub>m</sub>).</p>
+            <select id="nova-select" style="padding: 10px; font-size: 1rem; border-radius: 8px; margin: 1rem 0;" onchange="updateCalcSimple()">
+                <option value="1">NOVA 1 (Whole Food)</option>
+                <option value="4">NOVA 4 (Ultra-Processed)</option>
+            </select>
+            <div id="calc-result" style="font-size: 1.5rem; font-weight: 800; color: var(--signal-green);">High Coherence (Signal)</div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Food Coherence Research Initiative. <br>Educational Purpose Only. Not Medical Advice.</p>
     </footer>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // CHART.JS SETUP
-        let ctx = document.getElementById('coherenceChart').getContext('2d');
-        let coherenceChart = new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: ['Mitochondrial Voltage', 'Pattern Memory', 'Gut Integrity', 'Enzyme Stability', 'Immune Silence'],
-                datasets: [{
-                    label: 'Bioelectric Profile',
-                    data: [7],
-                    backgroundColor: 'rgba(0, 71, 171, 0.2)',
-                    borderColor: '#0047AB',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#0047AB'
-                }]
-            },
-            options: {
-                scales: {
-                    r: {
-                        suggestedMin: 0,
-                        suggestedMax: 100,
-                        grid: { color: '#e2e8f0' },
-                        pointLabels: { font: { size: 12, weight: 'bold' }, color: '#334155' }
-                    }
-                },
-                plugins: { legend: { display: false } }
-            }
-        });
-
-        // PRESET DATA [Sources 156, 141, 159]
-        const presets = {
-            'apple': { nova: 1, frag: 1, noise: 0, text: "High Coherence: Signal matches evolutionary history. High voltage support." },
-            'bread': { nova: 3, frag: 5, noise: 3, text: "Moderate: Matrix is altered (ground flour), but fermentation may aid digestion." },
-            'salami': { nova: 4, frag: 8, noise: 9, text: "High Risk: Nitrites transform into Nitrosylheme (Mutagen). Synergy of salts and phosphates creates high metabolic noise [Source 159]." },
-            'soda': { nova: 4, frag: 10, noise: 10, text: "Incoherent: Liquid sugar/sweeteners. Zero matrix. Direct gut barrier erosion." }
-        };
-
-        function applyPreset() {
-            const val = document.getElementById('food-preset').value;
-            if(val !== 'custom') {
-                const data = presets[val];
-                document.getElementById('nova-input').value = data.nova;
-                document.getElementById('input-frag').value = data.frag;
-                document.getElementById('input-noise').value = data.noise;
-                calculateCoherence();
-            }
-        }
-
-        function calculateCoherence() {
-            // Get inputs
-            const nova = parseInt(document.getElementById('nova-input').value);
-            const frag = parseInt(document.getElementById('input-frag').value);
-            const noise = parseInt(document.getElementById('input-noise').value);
+        // --- 1. LABEL DECODER LOGIC ---
+        let isLegalView = true;
+        function toggleLabel() {
+            const textDiv = document.getElementById('label-text');
+            const caption = document.getElementById('label-caption');
+            const btn = document.querySelector('.switch-btn'); // Target the button itself
             
-            // Update Labels
-            document.getElementById('val-frag').innerText = frag;
-            document.getElementById('val-noise').innerText = noise;
-
-            // ALGORITHM [Concept from Source 43 - FCI]
-            // Base score derived from NOVA (95, 75, 50, 25)
-            let base = nova === 1 ? 95 : nova === 2 ? 75 : nova === 3 ? 55 : 25;
-            
-            // Penalties
-            let penalty = (frag * 2.5) + (noise * 4); // Noise is weighted heavier due to "Cocktail Effect"
-            let score = Math.max(0, Math.round(base - penalty + 10)); // +10 buffer
-            if (score > 100) score = 100;
-
-            // Update UI
-            document.getElementById('final-score').innerText = score;
-            
-            // Colors & Status
-            let color = score > 80 ? '#10b981' : score > 50 ? '#f59e0b' : '#ef4444';
-            let risk = score > 80 ? 'OPTIMAL' : score > 50 ? 'MODERATE' : 'HIGH RISK';
-            
-            document.getElementById('risk-text').innerText = risk;
-            document.getElementById('risk-text').style.color = color;
-            document.querySelector('.score-display').style.background = score > 50 ? 'var(--deep-navy)' : '#7f1d1d'; // Turn red if critical
-
-            // Update Chart Data (Simulated Physics)
-            coherenceChart.data.datasets.borderColor = color;
-            coherenceChart.data.datasets.pointBackgroundColor = color;
-            coherenceChart.data.datasets.backgroundColor = score > 80 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
-            
-            // Map score to radar axes
-            coherenceChart.data.datasets.data = [
-                score,                  // Voltage
-                score - (frag * 2),     // Memory (impacted by frag)
-                100 - (noise * 8),      // Gut (impacted by noise)
-                score,                  // Enzyme
-                100 - (noise * 5)       // Immune Silence
-            ].map(x => Math.max(0, x));
-            
-            coherenceChart.update();
-
-            // Update Analysis Text
-            const presetVal = document.getElementById('food-preset').value;
-            let analysis = "";
-            if(presetVal !== 'custom') {
-                analysis = presets[presetVal].text;
+            if (isLegalView) {
+                // Switch to Bio-Reality
+                textDiv.innerHTML = `Pork Matrix, Salt, <span class="harmful">Nitrosylheme (Mutagen)</span>, <span class="harmful">Degraded Vitamin Fragments</span>, Sugar Spike, <span class="harmful">Free Phosphate Ions (Vascular Stress)</span>, Spices, <span class="harmful">Reactive Aldehydes</span>.`;
+                caption.innerHTML = "<strong>Biological Reality:</strong> The chemical byproducts created during processing and digestion (The Cocktail Effect).";
+                caption.style.color = "#b91c1c";
+                btn.innerText = "Show Legal Label";
+                btn.style.background = "#b91c1c";
             } else {
-                if(score < 50) analysis = "Warning: High probability of Bioelectric Mutagen activity. Likely to induce immune scanning and inflammation.";
-                else if(score < 80) analysis = "Conditional: Matrix is partially compromised. Metabolic cost is elevated.";
-                else analysis = "Optimal: Signal fidelity is high. Supports regenerative biology.";
+                // Switch back to Legal
+                textDiv.innerHTML = `Pork, Salt, <span class="chem">Sodium Nitrite</span>, <span class="chem">Sodium Ascorbate</span>, <span class="chem">Dextrose</span>, <span class="chem">Phosphates</span>, Spices, <span class="chem">Smoke Flavoring</span>.`;
+                caption.innerHTML = "Standard Legal View: Ingredients listed as added.";
+                caption.style.color = "#64748b";
+                btn.innerText = "Digest This Label";
+                btn.style.background = "#0047AB";
             }
-            
-            document.getElementById('analysis-text').innerText = analysis;
-            
-            const badge = document.getElementById('analysis-badge');
-            badge.innerText = risk;
-            badge.style.background = score > 80 ? '#d1fae5' : score > 50 ? '#fef3c7' : '#fee2e2';
-            badge.style.color = score > 80 ? '#065f46' : score > 50 ? '#92400e' : '#b91c1c';
+            isLegalView = !isLegalView;
         }
 
-        function downloadPDF() {
-            const element = document.getElementById('clinical-report');
-            html2pdf(element);
+        // --- 2. IMMUNE BOUNCER LOGIC ---
+        function scanFood(type) {
+            const display = document.getElementById('molecule-display');
+            const result = document.getElementById('bouncer-decision');
+            
+            if (type === 'whole') {
+                display.innerText = "🥦";
+                result.innerText = "SCANNING...";
+                result.style.color = "#334155";
+                
+                setTimeout(() => {
+                    result.innerText = "ACCESS GRANTED: Evolutionary Match (Self)";
+                    result.style.color = "var(--signal-green)";
+                }, 800);
+            } else {
+                display.innerText = "🥤";
+                result.innerText = "SCANNING...";
+                result.style.color = "#334155";
+                
+                setTimeout(() => {
+                    result.innerText = "ACCESS DENIED: Molecular Mismatch (Foreign/Noise)";
+                    result.style.color = "var(--noise-red)";
+                }, 800);
+            }
         }
 
-        // Init
-        calculateCoherence();
+        // --- 3. ENZYME TUNER LOGIC ---
+        function updateEnzyme() {
+            const ph = parseFloat(document.getElementById('ph-slider').value);
+            const temp = parseFloat(document.getElementById('temp-slider').value);
+            
+            document.getElementById('ph-val').innerText = ph;
+            document.getElementById('temp-val').innerText = temp;
 
+            // Simple logic: Deviation from 7.4 pH and 37C reduces efficiency
+            const phDev = Math.abs(7.4 - ph) * 40; // Penalty multiplier
+            const tempDev = Math.abs(37 - temp) * 20;
+            
+            let efficiency = 100 - phDev - tempDev;
+            if (efficiency < 0) efficiency = 0;
+
+            const meter = document.getElementById('enzyme-meter');
+            const status = document.getElementById('enzyme-status');
+            
+            meter.style.width = efficiency + "%";
+            status.innerText = "Efficiency: " + Math.round(efficiency) + "%";
+
+            if (efficiency > 80) {
+                meter.style.background = "#10b981"; // Green
+                status.style.color = "#10b981";
+            } else if (efficiency > 40) {
+                meter.style.background = "#f59e0b"; // Orange
+                status.style.color = "#f59e0b";
+            } else {
+                meter.style.background = "#ef4444"; // Red
+                status.style.color = "#ef4444";
+            }
+        }
+
+        // --- 4. UPSTREAM SLIDER LOGIC ---
+        function updateSystem() {
+            const val = document.getElementById('system-slider').value;
+            const text = document.getElementById('system-feedback');
+
+            if (val < 30) {
+                text.innerText = "Status: Commodity Subsidies (Corn/Soy) dominate. Default food is UPF.";
+            } else if (val < 70) {
+                text.innerText = "Status: Labeling transparency laws enacted. Price signals shifting.";
+            } else {
+                text.innerText = "Status: 'Food as Care'. Institutional procurement favors whole foods. Chronic disease dropping.";
+            }
+        }
+
+        // --- 5. DIGEST MAP LOGIC ---
+        function toggleDigest(element) {
+            // Close all others
+            document.querySelectorAll('.digest-step').forEach(el => {
+                el.classList.remove('active');
+                el.querySelector('.digest-detail').style.display = 'none';
+            });
+            // Open clicked
+            element.classList.add('active');
+            element.querySelector('.digest-detail').style.display = 'block';
+        }
+
+        // --- 6. SIMPLE CALC LOGIC ---
+        function updateCalcSimple() {
+            const val = document.getElementById('nova-select').value;
+            const res = document.getElementById('calc-result');
+            if(val === "1") {
+                res.innerText = "High Coherence (Signal)";
+                res.style.color = "#10b981";
+            } else {
+                res.innerText = "Bioelectric Mutagen (Noise)";
+                res.style.color = "#ef4444";
+            }
+        }
+
+        // Initialize
+        updateEnzyme();
     </script>
 </body>
 </html>
