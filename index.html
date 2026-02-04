@@ -1,201 +1,195 @@
-import { useEffect, useState } from 'react'
-import './App.css'
-
-import { Line } from 'react-chartjs-2'
-import {
-  Chart as ChartJS,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  Tooltip,
-  Legend
-} from 'chart.js'
-
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend)
-
-function App() {
-  const [rows, setRows] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch('http://127.0.0.1:8080/api/metrics')
-        if (!res.ok) throw new Error('HTTP ' + res.status)
-        const data = await res.json()
-        setRows(data)
-      } catch (err) {
-        console.error(err)
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Food Coherence Initiative</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
     }
-
-    load()
-  }, [])
-
-  if (loading) {
-    return <p style={{ padding: 40, textAlign: 'center' }}>Loading metrics…</p>
-  }
-
-  if (error) {
-    return (
-      <p style={{ padding: 40, textAlign: 'center', color: '#c00' }}>
-        Error loading metrics: {error}
-      </p>
-    )
-  }
-
-  if (!rows.length) {
-    return (
-      <p style={{ padding: 40, textAlign: 'center' }}>
-        No telemetry rows yet. Run your Δ72 scripts to generate some data.
-      </p>
-    )
-  }
-
-  const headers = Object.keys(rows[0])
-
-  // 👉 tweak these to match your CSV column names
-  const labelField = 'timestamp'   // or 'run', 'date', etc.
-  const valueField = 'eff'         // or 'savings', 'uplift', etc.
-
-  const labels = rows.map((row, idx) => row[labelField] || `Run ${idx + 1}`)
-
-  const values = rows.map((row) => {
-    const v = parseFloat(row[valueField])
-    return isNaN(v) ? null : v
-  })
-
-  const chartData = {
-    labels,
-    datasets: [
-      {
-        label: `Δ72 ${valueField} metric`,
-        data: values,
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        tension: 0.25,
-        pointRadius: 3
-      }
-    ]
-  }
-
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        labels: { color: '#f5f5f5' }
-      },
-      tooltip: {
-        mode: 'index',
-        intersect: false
-      }
-    },
-    scales: {
-      x: {
-        ticks: { color: '#bbbbbb' },
-        grid: { color: '#222' }
-      },
-      y: {
-        ticks: { color: '#bbbbbb' },
-        grid: { color: '#222' }
-      }
+    header {
+      background-color: #345;
+      color: white;
+      padding: 1em;
+      text-align: center;
     }
-  }
+    nav a {
+      color: white;
+      margin: 0 1em;
+      text-decoration: none;
+    }
+    main {
+      padding: 2em;
+    }
+    section {
+      margin-bottom: 3em;
+    }
+    input[type=range], select {
+      width: 100%;
+    }
+    .calculator {
+      max-width: 600px;
+      margin: 2em auto;
+      padding: 1em;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+    .calculator label {
+      display: block;
+      margin-top: 1em;
+    }
+    .score-output {
+      font-size: 1.5em;
+      margin-top: 1em;
+      text-align: center;
+      font-weight: bold;
+    }
+    .risk-overlay {
+      margin-top: 1em;
+      text-align: center;
+      font-style: italic;
+    }
+    .video-container iframe {
+      margin-bottom: 1em;
+    }
+    footer {
+      background-color: #eee;
+      text-align: center;
+      padding: 1em;
+    }
+  </style>
+</head>
+<body>
 
-  return (
-    <div
-      style={{
-        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
-        padding: '32px',
-        backgroundColor: '#0b0c10',
-        minHeight: '100vh',
-        color: '#f5f5f5'
-      }}
-    >
-      <h1 style={{ textAlign: 'center', marginBottom: '8px' }}>
-        Δ72 Coherence Engine Dashboard
-      </h1>
-      <p
-        style={{
-          textAlign: 'center',
-          marginBottom: '24px',
-          opacity: 0.8,
-          fontSize: '0.95rem'
-        }}
-      >
-        Live savings & coherence metrics from your local node.
-      </p>
+  <header>
+    <h1>Food Coherence Initiative</h1>
+    <p>Translating bioelectric food integrity into public health action</p>
+    <nav>
+      <a href="#what">What Is Food Coherence?</a>
+      <a href="#label">The Label</a>
+      <a href="#science">The Science</a>
+      <a href="#law">Legal Basis</a>
+      <a href="#calculator">Score Calculator</a>
+      <a href="#videos">Videos</a>
+      <a href="#involved">Get Involved</a>
+    </nav>
+  </header>
 
-      {/* Chart card */}
-      <div
-        style={{
-          background: '#14161c',
-          borderRadius: '12px',
-          padding: '16px',
-          marginBottom: '24px'
-        }}
-      >
-        <h2 style={{ marginBottom: '12px' }}>Savings / Efficiency Trend</h2>
-        <Line data={chartData} options={chartOptions} />
+  <main>
+    <section id="what">
+      <h2>What Is Food Coherence?</h2>
+      <p>Food Coherence measures the structural and energetic integrity of foods after processing, using lab signals such as mitochondrial voltage, tissue memory, and electrical coherence. It indicates how well food supports or disrupts biological signaling and tissue health over time.</p>
+      <img src="assets/Food Coherence Bioelectric signal.jpeg" alt="Bioelectric impact of food">
+    </section>
+
+    <section id="label">
+      <h2>The Food Coherence Label</h2>
+      <ul>
+        <li><strong>80–100</strong>: High Coherence (minimally processed)</li>
+        <li><strong>50–79</strong>: Moderate Coherence</li>
+        <li><strong>0–49</strong>: Low Coherence (ultra-processed)</li>
+      </ul>
+      <img src="assets/Food coherence measures.jpeg" alt="Food coherence scoring">
+    </section>
+
+    <section id="science">
+      <h2>Bioelectric Science</h2>
+      <p>Ultra-processed foods destabilize cellular potentials, reduce mitochondrial voltage, and suppress pattern memory. Coherent foods preserve these systems, helping prevent chronic disease from the bioelectric level up.</p>
+      <img src="assets/Bioelectric Coherent vs Incoherent.jpeg" alt="Bioelectric stability in food">
+    </section>
+
+    <section id="law">
+      <h2>Legal Framework</h2>
+      <p>This initiative fulfills key unmet obligations of EU Regulation EC 178/2002, including cumulative risk, chronic stress, and label transparency.</p>
+      <ul>
+        <li><strong>Art. 2:</strong> Food as system exposure</li>
+        <li><strong>Art. 14:</strong> Unsafe includes long-term functional harm</li>
+        <li><strong>Art. 16:</strong> Labels must not mislead by omission</li>
+      </ul>
+    </section>
+
+    <section id="calculator">
+      <h2>Expanded Food Coherence Score Calculator</h2>
+      <div class="calculator">
+        <label>Select Food Category:
+          <select id="category">
+            <option value="80">NOVA 1 - Unprocessed/Minimally Processed</option>
+            <option value="60">NOVA 2 - Processed Culinary Ingredients</option>
+            <option value="40">NOVA 3 - Processed Foods</option>
+            <option value="20">NOVA 4 - Ultra-Processed Foods</option>
+          </select>
+        </label>
+        <label>Mitochondrial Voltage (0–10): <input type="range" min="0" max="10" value="5" id="voltage"></label>
+        <label>Pattern Memory (0–10): <input type="range" min="0" max="10" value="5" id="pattern"></label>
+        <label>Matrix Damage (0–10): <input type="range" min="0" max="10" value="5" id="fragment"></label>
+        <label>Inflammatory Noise (0–10): <input type="range" min="0" max="10" value="5" id="noise"></label>
+        <div class="score-output" id="coherenceScore">Score: 65</div>
+        <div class="risk-overlay" id="riskOverlay">Risk Level: Moderate</div>
       </div>
+      <script>
+        const inputs = document.querySelectorAll('input[type=range], select');
+        const output = document.getElementById('coherenceScore');
+        const overlay = document.getElementById('riskOverlay');
 
-      {/* Raw table card */}
-      <div
-        style={{
-          background: '#14161c',
-          borderRadius: '12px',
-          padding: '16px',
-          overflowX: 'auto'
-        }}
-      >
-        <h2 style={{ marginBottom: '12px' }}>Raw Telemetry</h2>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              {headers.map((h) => (
-                <th
-                  key={h}
-                  style={{
-                    textAlign: 'left',
-                    borderBottom: '1px solid #333',
-                    padding: '8px',
-                    fontSize: '0.8rem',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.06em'
-                  }}
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, idx) => (
-              <tr key={idx}>
-                {headers.map((h) => (
-                  <td
-                    key={h}
-                    style={{
-                      borderBottom: '1px solid #222',
-                      padding: '6px 8px',
-                      fontSize: '0.9rem'
-                    }}
-                  >
-                    {row[h]}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        function updateScore() {
+          let base = parseInt(document.getElementById('category').value);
+          let voltage = parseInt(document.getElementById('voltage').value);
+          let pattern = parseInt(document.getElementById('pattern').value);
+          let fragment = parseInt(document.getElementById('fragment').value);
+          let noise = parseInt(document.getElementById('noise').value);
+          let mod = (voltage + pattern + (10 - fragment) + (10 - noise)) / 4 * 5;
+          let score = Math.round((base + mod) / 2);
+
+          output.textContent = `Score: ${score}`;
+          if (score >= 80) {
+            overlay.textContent = 'Risk Level: Low';
+            overlay.style.color = 'green';
+          } else if (score >= 50) {
+            overlay.textContent = 'Risk Level: Moderate';
+            overlay.style.color = 'orange';
+          } else {
+            overlay.textContent = 'Risk Level: High';
+            overlay.style.color = 'red';
+          }
+        }
+
+        inputs.forEach(input => input.addEventListener('input', updateScore));
+        updateScore();
+      </script>
+    </section>
+
+    <section id="videos">
+      <h2>Watch & Learn</h2>
+      <p>Explore educational videos that support the Food Coherence mission:</p>
+      <div class="video-container">
+        <iframe width="100%" height="315" src="https://www.youtube.com/embed/WKQt8-Zmjqo" title="Video 1" frameborder="0" allowfullscreen></iframe>
+        <iframe width="100%" height="315" src="https://www.youtube.com/embed/X7dJBhWuA_o" title="Video 2" frameborder="0" allowfullscreen></iframe>
+        <iframe width="100%" height="315" src="https://www.youtube.com/embed/WhBaLUwAjzc" title="Video 3" frameborder="0" allowfullscreen></iframe>
+        <iframe width="100%" height="315" src="https://www.youtube.com/embed/0977o43L8S4" title="Video 4" frameborder="0" allowfullscreen></iframe>
+        <iframe width="100%" height="315" src="https://www.youtube.com/embed/yem9vS09DbY" title="Video 5" frameborder="0" allowfullscreen></iframe>
       </div>
-    </div>
-  )
-}
+    </section>
 
-export default App
+    <section id="involved">
+      <h2>Get Involved</h2>
+      <p>If you're a policymaker, lab, scientist, food manufacturer, or citizen advocate, there's a role for you.</p>
+      <ul>
+        <li><strong>Labs:</strong> Apply to become an accredited testing site.</li>
+        <li><strong>Policymakers:</strong> Integrate Food Coherence Scores in public procurement.</li>
+        <li><strong>Consumers:</strong> Demand labeling and transparency from food companies.</li>
+      </ul>
+      <p>Contact: <a href="mailto:coherencedashboard@gmail.com">coherencedashboard@gmail.com</a></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Food Coherence Initiative | Built on GitHub Pages</p>
+  </footer>
+
+</body>
+</html>
